@@ -1,12 +1,60 @@
-
+import { useState } from "react"
+import axios from "axios"
 
 function App() {
   
+  const[newTodo, setNewTodo] = useState("") //to store the input value
+  const[ todos, setTodos] = useState([]) //to store the list of todos
+
+
+  const addTodo = async(e)=>{ //async cuz we will talk to backend 
+    e.preventDefault(); //prevent page refresh on form submit
+    if(!newTodo.trim()) return; //if input is empty, do nothing
+    try {
+      //post request to backend to add new todo
+      const response = await axios.post("/api/v1/todos", {text: newTodo}); //“Send the text the user typed to the backend, wait for the backend to save it in the database, and give me back the result.”
+      setTodos([...todos, response.data]); //update the todos state with the new todo item returned from the backend.. response.data is the saved todo item which contains _id,text,completed,createdAt...
+      setNewTodo(""); //clear the input field
+    } catch (error) {
+      console.log("Error adding todo:", error);
+    }
+  }  
+  /* 
+  What the user types goes into newTodo.
+  newTodo is sent as { text } in req.body to the backend.
+  Backend stores it in MongoDB.
+  Backend returns the saved todo.
+  We store that returned todo in another state (todos) so React can render it on the UI.
+  We create another state to store the response of the POST request so it can be visibly shown on the UI.
+  */
+
+  
+
+
+
 
   return (
-    <>
-      
-    </>
+   <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-100
+    flex items-center justify-center">
+    <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-8 w-full max-w-md">
+    <div>
+      <h1 className="text-4xl font-bold text-gray-800 mb-8 ">Task Manager</h1>
+    </div>
+    <div>
+      <form className="flex flex-col sm:flex-row gap-4">
+        <input 
+        className=" flex-1 outline-none px-3 py-2 text-gray-500 "
+          type="text" 
+          placeholder="Add a new task..."
+          value={newTodo}
+          onChange={(e)=> setNewTodo(e.target.value)}
+          required
+          />
+          <button className="text-white bg-amber-950 hover:bg-black m-5 p-2 rounded-2xl cursor-pointer" >Add Task</button>
+      </form>
+    </div>
+    </div>
+   </div>
   )
 }
 
