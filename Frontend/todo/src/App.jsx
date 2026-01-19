@@ -21,8 +21,12 @@ function App() {
       const response = await axios.post("/api/v1/todos", {text: newTodo}); //“Send the text the user typed to the backend, wait for the backend to save it in the database, and give me back the result.”
       //setTodos([...todos, response.data.data]); //update the todos state with the new todo item returned from the backend.. response.data is the saved todo item which contains _id,text,completed,createdAt...
       
-      const savedTodo = response.data.data;
-      if (!savedTodo) return;
+      const savedTodo = response?.data?.data;
+      
+    if (!savedTodo || !savedTodo._id) {
+      console.log("Warning: backend returned invalid todo", savedTodo);
+      return; // stop if undefined or invalid
+    }
 
       setTodos(prev => [...prev, savedTodo]); //using functional update to ensure we have the latest state value
       setNewTodo(""); //clear the input field so user can type a new todo without manually deleting the old one
