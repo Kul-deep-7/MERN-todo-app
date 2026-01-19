@@ -84,19 +84,28 @@ const startEditing =(todo) =>{
 // Since we have the id, we also know which todo’s text we are editing and updating.
 }
 
-const saveEdit = async(id)=>{
+const saveEdit = async(id)=>{ //takes id so it knows which todo to update
   try {
-    const response = await axios.patch(`/api/v1/todos/${id}`, {text: editingText});
+    const response = await axios.patch(`/api/v1/todos/${id}`, {text: editingText}); //URL contains the todo id so backend knows which todo to update cuz we defined :id in the route & took id as parameter in this function
+
     setTodos(todos.map((todo)=>
       todo._id === id ? response.data.data : todo
-    ));
-    setEditingTodo(null);
+    )); //we loop through todos, and if the todo id matches the updated one, we replace it with the updated todo from the response; otherwise, we keep the existing todo unchanged.
+    setEditingTodo(null); //in UI it removes the input field and  tick & cross icon & shows the updated text 
     setEditingText("");
   } catch (error) {
     console.log("Error updating todo", error);
   }
 }
 
+const deleteTodo = async(id)=>{
+  try {
+    await axios.delete(`/api/v1/todos/${id}`);
+    setTodos(todos.filter((todo)=> todo._id !== id)); //we filter out the deleted todo from the state so UI updates accordingly
+  } catch (error) {
+    console.log("Error deleting todo", error);
+  }
+}
 
 
 
