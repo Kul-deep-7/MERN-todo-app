@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-
+import path from "path";
 const app = express();
 
 app.use(express.json({
@@ -10,6 +10,15 @@ app.use(express.json({
 app.use(express.urlencoded({
     extended : true, limit: '20kb'
 }))
+
+const __dirname = path.resolve();
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/todo/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend/todo", "dist", "index.html"));
+  });
+}
 
 
 //routes

@@ -174,7 +174,7 @@ const toggleTodo = async(id)=>{
                   </button>
                   </div></div>
                 ):(
-                  <div className="flex gap-x-2">
+                  <div className="flex gap-x-2 overflow-hidden">
                           <button
                             onClick={() => toggleTodo(todo._id)}
                             className={`flex-shrink-0 h-6 w-6 border rounded-full flex items-center justify-center ${
