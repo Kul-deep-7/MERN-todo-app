@@ -1,0 +1,94 @@
+MERN Todo App: Mental Flow Cheat Sheet 🧠💡
+1️⃣ Fetch Todos (on page load)
+
+useEffect runs → calls fetchTodos()
+
+GET request to /api/v1/todos
+
+Response → setTodos(response.data.data)
+
+✅ Result: UI shows all todos from DB after refresh
+
+Your style:
+
+When the page loads, grab all todos from backend and put them in state so the UI always has the latest data.
+
+2️⃣ Add Todo
+
+Form input → store in newTodo state
+
+On submit → POST request to /api/v1/todos with { text: newTodo }
+
+Response → setTodos([...todos, response.data.data])
+
+✅ Result: new todo appears immediately in UI
+
+Your style:
+
+When we add a todo, send it to backend, then add it to state so UI shows it instantly.
+
+3️⃣ Edit / Save Todo
+
+Click edit button → set:
+
+editingTodo = todo._id
+
+editingText = todo.text
+
+Input field shows editingText → changes with onChange
+
+Click save button → PATCH request to /api/v1/todos/:id with { text: editingText }
+
+Response → setTodos(todos.map(todo => todo._id === id ? response.data.data : todo))
+
+Reset: editingTodo = null, editingText = ""
+
+✅ Result: only the edited todo updates in UI
+
+Your style:
+
+We mark which todo we’re editing, hold the text in temp state, send it to backend, then update that todo in state so the UI shows the change.
+
+4️⃣ Delete Todo
+
+Click delete button → DELETE request to /api/v1/todos/:id
+
+Update state: setTodos(todos.filter(todo => todo._id !== id))
+
+✅ Result: deleted todo disappears from UI
+
+Your style:
+
+Send the todo id to backend to delete it, then filter it out from state so UI updates.
+
+5️⃣ Toggle Completed Todo
+
+Click complete/uncomplete button
+
+Find todo in state: todos.find(t => t._id === id)
+
+PATCH request to /api/v1/todos/:id with { completed: !todo.completed }
+
+Update state: setTodos(todos.map(t => t._id === id ? response.data.data : t))
+
+✅ Result: todo switches between completed / not completed instantly
+
+Your style:
+
+Find the todo, flip its completed value, send it to backend, then update state so UI shows the new status.
+
+Extra mental pattern you can remember
+
+ID decides which todo → always pass _id to backend or check in state
+
+State decides what changes → todos, editingTodo, editingText, newTodo
+
+Backend is truth → anything persisted comes from DB
+
+Map / filter / find → update only what needs updating in UI
+
+useEffect → sync frontend with backend on mount
+
+💡 One-sentence summary for your brain:
+
+“All CRUD actions follow the same flow: find the todo (ID), send change to backend, update state (map/filter) so UI shows it instantly.”

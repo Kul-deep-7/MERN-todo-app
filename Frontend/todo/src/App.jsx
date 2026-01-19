@@ -98,17 +98,28 @@ const saveEdit = async(id)=>{ //takes id so it knows which todo to update
   }
 }
 
-const deleteTodo = async(id)=>{
+const deleteTodo = async(id)=>{ //takes id so it knows which todo to delete
   try {
-    await axios.delete(`/api/v1/todos/${id}`);
+    await axios.delete(`/api/v1/todos/${id}`); //URL contains the todo id so backend knows which todo to delete cuz we defined :id in the route & took id as parameter in this function
     setTodos(todos.filter((todo)=> todo._id !== id)); //we filter out the deleted todo from the state so UI updates accordingly
   } catch (error) {
     console.log("Error deleting todo", error);
   }
 }
 
-
-
+const toggleTodo = async(id)=>{
+  try {
+    const todo = todos.find((t)=> t._id === id); 
+    const response = await axios.patch(`/api/v1/todos/${id}`, {
+      completed: !todo.completed, 
+    });
+    setTodos(todos.map((t)=>
+      t._id === id ? response.data.data : t
+    )); 
+  } catch (error) {
+   console.log("Error toggling todo", error); 
+  }
+}
 
   return (
    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-100
@@ -182,7 +193,8 @@ const deleteTodo = async(id)=>{
                       onClick={()=> startEditing(todo)}>
                       <MdModeEditOutline />
                     </button>
-                    <button className="p-2 text-red-500 hover:text-red-700 rounded-lg hover:bg-red-50 duration-200">
+                    <button onClick={()=>deleteTodo(todo._id)}
+                    className="p-2 text-red-500 hover:text-red-700 rounded-lg hover:bg-red-50 duration-200">
                       <FaTrash />
                     </button>
                    </div>
