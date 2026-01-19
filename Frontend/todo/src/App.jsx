@@ -84,6 +84,19 @@ const startEditing =(todo) =>{
 // Since we have the id, we also know which todo’s text we are editing and updating.
 }
 
+const saveEdit = async(id)=>{
+  try {
+    const response = await axios.patch(`/api/v1/todos/${id}`, {text: editingText});
+    setTodos(todos.map((todo)=>
+      todo._id === id ? response.data.data : todo
+    ));
+    setEditingTodo(null);
+    setEditingText("");
+  } catch (error) {
+    console.log("Error updating todo", error);
+  }
+}
+
 
 
 
@@ -93,7 +106,7 @@ const startEditing =(todo) =>{
     flex items-center justify-center">
     <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-8 w-full max-w-md">
     <div>
-      <h1 className="text-4xl font-bold text-gray-800 mb-8 ">Task Manager</h1>
+      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Task Manager</h1>
     </div>
     <div>
       <form onSubmit={addTodo} 
@@ -131,16 +144,27 @@ const startEditing =(todo) =>{
                     value={editingText}
                     onChange={(e) => setEditingText(e.target.value)}/>
                  <div> 
-                  <button  className="text-white rounded-lg bg-green-600 hover:bg-green-500 px-4 py-2 cursor-pointer"
+                  <button  className="text-white rounded-lg bg-red-600 hover:bg-red-500 px-4 py-2 cursor-pointer"
                   onClick={()=> setEditingTodo(null)}> 
                     <IoClose />
                   </button>
-                  <button className="text-gray-800 rounded-lg bg-gray-500 hover:bg-gray-400 px-4 py-2 cursor-pointer" >
+                  <button onClick={()=>saveEdit(todo._id)}
+                  className="text-gray-800 rounded-lg bg-green-500 hover:bg-green-400 px-4 py-2 cursor-pointer" >
                     <MdOutlineDone />
                   </button>
                   </div></div>
                 ):(
                   <div className="flex gap-x-2">
+                          <button
+                            onClick={() => toggleTodo(todo._id)}
+                            className={`flex-shrink-0 h-6 w-6 border rounded-full flex items-center justify-center ${
+                              todo.completed
+                                ? "bg-green-500 border-green-500"
+                                : "border-gray-300 hover:border-blue-400"
+                            }`}
+                          >
+                            {todo.completed && <MdOutlineDone />}
+                          </button>
                    <span className="text-gray-800 truncate font-medium">
                             {todo.text}
                           </span>
